@@ -7,5 +7,5 @@
 import Foundation
 
 class ApiKeys {
-    static let OPEN_WEATHER_API_KEY = ""
+    static let OPEN_WEATHER_API_KEY = "asdasd"
 }

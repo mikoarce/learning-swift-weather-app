@@ -6,6 +6,9 @@
 build/
 DerivedData/
 
+##Ignore API Key ID container
+Clima/ApiKeys.swift
+
 ## Various settings
 *.pbxuser
 !default.pbxuser
