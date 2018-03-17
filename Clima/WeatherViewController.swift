@@ -89,7 +89,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) -> String {
         let long = longitude
         let lat = latitude
-        let urlAsString = "http://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=f7e33a62052ade2717ea82d57bd89a2b"
+        let urlAsString = "http://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APP_ID)"
         let url = URL(string: urlAsString)
         Alamofire.request(url!, method: .get).validate().responseJSON { response in
             switch response.result {
