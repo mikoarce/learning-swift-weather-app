@@ -15,7 +15,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-    let APP_ID = ApiKeys.OPEN_WEATHER_API_KEY
+    let APP_ID = ApiKeys.OPEN_WEATHER_API_KEY //Insert OpenWeather API Key here!
     
 
     //TODO: Declare instance variables here
