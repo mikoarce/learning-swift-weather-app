@@ -11,6 +11,8 @@ DerivedData/
 
 ##Ignore API Key ID container
 Clima/ApiKeys.swift
+Clima.xcodeproj/
+Clima.xcworkspace/
 
 ## Various settings
 *.pbxuser
