@@ -28,6 +28,12 @@ class WeatherDataModel {
     }
     
     init(jsonDict: NSDictionary) {
+        let temperatureInfoDict = jsonDict.object(forKey: JSONKeys.KEY_TEMP_INFO) as! Dictionary<String, Any>
+        let locationInfoDict = jsonDict.object(forKey: JSONKeys.KEY_LOCATION_INFO) as! Dictionary<String, Any>
+        let weatherInfoDict = jsonDict.object(forKey: JSONKeys.KEY_WEATHER_INFO) as! Dictionary<String, Any>
+        let windInfoDict = jsonDict.object(forKey: JSONKeys.KEY_WIND_INFO) as! Dictionary<String, Any>
+    
+        let locationName = jsonDict.object(forKey: JSONKeys.KEY_LOCATION_NAME) as! String
         
     }
 }
