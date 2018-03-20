@@ -89,29 +89,34 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) -> String {
         let long = longitude
         let lat = latitude
-        let urlAsString = "http://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APP_ID)"
+        let urlAsString = "\(WEATHER_URL)?lat=\(lat)&lon=\(long)&appid=\(APP_ID)"
+        print("Sending: " + urlAsString)
         let url = URL(string: urlAsString)
+        
         Alamofire.request(url!, method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let value):
                 let json = JSON(value)
+                let jsonDict = value as! NSDictionary
                 print("JSON: \(json)")
+                print("JSONDict: \(jsonDict)")
             case .failure(let error):
-                print(error)
+                self.handleError(error)
             }
         }
         
         return ""
     }
     
-    
     //Write the didFailWithError method here:
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        handleError(error)
+    }
+    
+    func handleError(_ error : Error) {
         print(error)
         cityLabel.text = "Location Unavailable"
     }
-    
-    
 
     
     //MARK: - Change City Delegate methods
