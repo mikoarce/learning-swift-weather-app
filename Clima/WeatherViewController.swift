@@ -101,6 +101,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 print("JSON: \(json)")
                 print("JSONDict: \(jsonDict)")
                 let weatherData = WeatherDataModel(jsonDict: jsonDict)
+                print(String(describing: weatherData))
             case .failure(let error):
                 self.handleError(error)
             }

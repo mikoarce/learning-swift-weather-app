@@ -17,7 +17,7 @@ class JSONKeys {
     static let KEY_MIN_TEMP = "temp_min"
     
     static let KEY_LOCATION_INFO = "sys"
-    static let KEY_LOCATION_NAME = "name"
+    static let KEY_CITY_NAME = "name"
     static let KEY_COUNTRY = "country"
     static let KEY_SUNRISE = "sunrise"
     static let KEY_SUNSET = "sunset"
@@ -27,5 +27,5 @@ class JSONKeys {
     static let KEY_WEATHER_SUMMARY = "main"
     
     static let KEY_WIND_INFO = "wind"
-    static let KEY_SPEED = "speed"
+    static let KEY_WIND_SPEED = "speed"
 }
