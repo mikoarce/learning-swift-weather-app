@@ -9,13 +9,68 @@
 import UIKit
 import SwiftyJSON
 
+protocol TemperatureConversionProtocol {
+    var tempMinAsCelcius: Float? { get }
+    var tempMinAsFahrenheit: Float? { get }
+    var tempMaxAsCelcius: Float? { get }
+    var tempMaxAsFahrenheit: Float? { get }
+    var currTempAsCelcius: Float? { get }
+    var currTempAsFahrenheit: Float? { get }
+}
+
 struct TemperatureInfo {
-    //Declare your model variables here
     let humidity: Int?
     let pressure: Int?
     let tempMin: Float?
     let tempMax: Float?
     let currTemp: Float?
+    
+    private func convertTemperatureToCelcius(fromKelvin temp: Float) -> Float {
+        return temp - 273.15
+    }
+    
+    private func convertTemperatureToFahrenheit(fromKelvin temp: Float) -> Float {
+        return (9.0/5.0) * convertTemperatureToCelcius(fromKelvin:temp) + 32.0
+    }
+}
+
+extension TemperatureInfo : TemperatureConversionProtocol {
+    //check out guard
+    var tempMinAsCelcius: Float? {
+        if let temp = tempMin {
+            return convertTemperatureToCelcius(fromKelvin: temp)
+        } else { return nil }
+    }
+    
+    var tempMinAsFahrenheit: Float? {
+        if let temp = tempMin {
+            return convertTemperatureToFahrenheit(fromKelvin: temp)
+        } else { return nil }
+    }
+    
+    var tempMaxAsCelcius: Float? {
+        if let temp = tempMax {
+            return convertTemperatureToCelcius(fromKelvin: temp)
+        } else { return nil }
+    }
+    
+    var tempMaxAsFahrenheit: Float? {
+        if let temp = tempMax {
+            return convertTemperatureToFahrenheit(fromKelvin: temp)
+        } else { return nil }
+    }
+    
+    var currTempAsCelcius: Float? {
+        if let temp = currTemp {
+            return convertTemperatureToCelcius(fromKelvin: temp)
+        } else { return nil }
+    }
+    
+    var currTempAsFahrenheit: Float? {
+        if let temp = currTemp {
+            return convertTemperatureToFahrenheit(fromKelvin: temp)
+        } else { return nil }
+    }
 }
 
 class WeatherDataModel {
@@ -27,7 +82,6 @@ class WeatherDataModel {
     var sunriseTime: Date? = nil
     var sunsetTime: Date? = nil
     var windSpeed: Float? = nil
-    
     
     var completeLocation: String {
         get { return "\(cityName ?? "nil"), \(country ?? "nil")" }
