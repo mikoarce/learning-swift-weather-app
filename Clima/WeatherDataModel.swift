@@ -80,6 +80,7 @@ class WeatherDataModel {
         get { return "\(cityName ?? "nil"), \(country ?? "nil")" }
     }
     
+    //TODO: Refactor by removing hard coded stuff
     init(jsonDict: NSDictionary) {
         if let temperatureInfoDict = jsonDict.object(forKey: JSONKeys.KEY_TEMP_INFO) as? Dictionary<String, Any> {
             let humidity = temperatureInfoDict[JSONKeys.KEY_HUMIDITY] as? Int

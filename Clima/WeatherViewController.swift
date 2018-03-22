@@ -25,7 +25,13 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
-
+    @IBOutlet weak var temperatureRangeLabel: UILabel!
+    @IBOutlet weak var sunriseTimeLabel: UILabel!
+    @IBOutlet weak var sunsetTimeLabel: UILabel!
+    @IBOutlet weak var pressureLabel: UILabel!
+    @IBOutlet weak var humidityabel: UILabel!
+    @IBOutlet weak var windSpeedLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,77 +43,34 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.startUpdatingLocation()
     }
     
-    
-    
-    //MARK: - Networking
-    /***************************************************************/
-    
-    //Write the getWeatherData method here:
-    
-
-    
-    
-    
-    
-    
-    //MARK: - JSON Parsing
-    /***************************************************************/
-   
-    
-    //Write the updateWeatherData method here:
-    
-
-    
-    
-    
-    //MARK: - UI Updates
-    /***************************************************************/
-    
-    
-    //Write the updateUIWithWeatherData method here:
-    
-    
-    
-    
-    
-    
-    //MARK: - Location Manager Delegate Methods
-    /***************************************************************/
-    
-    
-    //Write the didUpdateLocations method here:
+    /*
+     Method to get location of phone based on locationManager.desiredAccuracy set in viewDidLoad().
+     */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             if location.horizontalAccuracy > 0 { // Negative Horizontal Accuracy means invalid result.
                 locationManager.stopUpdatingLocation() //Stop updating once location is found, else burn battery.
-                print("long = \(location.coordinate.longitude), lat = \(location.coordinate.latitude)")
                 findLocation(longitude: location.coordinate.longitude, latitude: location.coordinate.latitude)
             }
         }
     }
     
-    func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) -> String {
+    func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) {
         let long = longitude
         let lat = latitude
         let urlAsString = "\(WEATHER_URL)?lat=\(lat)&lon=\(long)&appid=\(APP_ID)"
-        print("Sending: " + urlAsString)
         let url = URL(string: urlAsString)
         
         Alamofire.request(url!, method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let value):
-                let json = JSON(value)
                 let jsonDict = value as! NSDictionary
-                print("JSON: \(json)")
-                print("JSONDict: \(jsonDict)")
                 let weatherData = WeatherDataModel(jsonDict: jsonDict)
-                print(String(describing: weatherData))
+                self.populateWeatherDataUI(withData: weatherData)
             case .failure(let error):
                 self.handleError(error)
             }
         }
-        
-        return ""
     }
     
     //Write the didFailWithError method here:
@@ -120,6 +83,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         cityLabel.text = "Location Unavailable"
     }
 
+    func populateWeatherDataUI(withData weatherData: WeatherDataModel) {
+        cityLabel.text = weatherData.completeLocation
+        if let tempInfo = weatherData.tempInfo {
+            temperatureLabel.text = "\(tempInfo.currTempAsCelsius!.format(f: ".0"))°C"
+            temperatureRangeLabel.text = "\(tempInfo.tempMinAsCelsius!.format(f: ".0")) to \(tempInfo.tempMaxAsCelsius!.format(f: ".0"))°C"
+            pressureLabel.text = "\(tempInfo.pressure!) psi"
+            humidityabel.text = "\(tempInfo.humidity!)%"
+        }
+    }
     
     //MARK: - Change City Delegate methods
     /***************************************************************/
@@ -129,12 +101,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
 
     
-    //Write the PrepareForSegue Method here
-    
-    
-    
-    
-    
+    //Write the PrepareForSegue Method here    
 }
+
+
 
 
