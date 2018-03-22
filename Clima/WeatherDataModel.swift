@@ -10,11 +10,11 @@ import UIKit
 import SwiftyJSON
 
 protocol TemperatureConversionProtocol {
-    var tempMinAsCelcius: Float? { get }
+    var tempMinAsCelsius: Float? { get }
     var tempMinAsFahrenheit: Float? { get }
-    var tempMaxAsCelcius: Float? { get }
+    var tempMaxAsCelsius: Float? { get }
     var tempMaxAsFahrenheit: Float? { get }
-    var currTempAsCelcius: Float? { get }
+    var currTempAsCelsius: Float? { get }
     var currTempAsFahrenheit: Float? { get }
 }
 
@@ -25,51 +25,44 @@ struct TemperatureInfo {
     let tempMax: Float?
     let currTemp: Float?
     
-    private func convertTemperatureToCelcius(fromKelvin temp: Float) -> Float {
+    private func convertTemperatureToCelsius(fromKelvin temp: Float?) -> Float? {
+        guard let temp = temp else {
+            return nil
+        }
         return temp - 273.15
     }
     
-    private func convertTemperatureToFahrenheit(fromKelvin temp: Float) -> Float {
-        return (9.0/5.0) * convertTemperatureToCelcius(fromKelvin:temp) + 32.0
+    private func convertTemperatureToFahrenheit(fromKelvin temp: Float?) -> Float? {
+        guard let temp = temp, let tempInCelsius = convertTemperatureToCelsius(fromKelvin: temp) else {
+            return nil
+        }
+        return (9.0/5.0) * tempInCelsius + 32.0
     }
 }
 
 extension TemperatureInfo : TemperatureConversionProtocol {
-    //check out guard
-    var tempMinAsCelcius: Float? {
-        if let temp = tempMin {
-            return convertTemperatureToCelcius(fromKelvin: temp)
-        } else { return nil }
+    var tempMinAsCelsius: Float? {
+        return convertTemperatureToCelsius(fromKelvin: tempMin)
     }
     
     var tempMinAsFahrenheit: Float? {
-        if let temp = tempMin {
-            return convertTemperatureToFahrenheit(fromKelvin: temp)
-        } else { return nil }
+        return convertTemperatureToFahrenheit(fromKelvin: tempMin)
     }
     
-    var tempMaxAsCelcius: Float? {
-        if let temp = tempMax {
-            return convertTemperatureToCelcius(fromKelvin: temp)
-        } else { return nil }
+    var tempMaxAsCelsius: Float? {
+        return convertTemperatureToCelsius(fromKelvin: tempMax)
     }
     
     var tempMaxAsFahrenheit: Float? {
-        if let temp = tempMax {
-            return convertTemperatureToFahrenheit(fromKelvin: temp)
-        } else { return nil }
+        return convertTemperatureToFahrenheit(fromKelvin: tempMax)
     }
     
-    var currTempAsCelcius: Float? {
-        if let temp = currTemp {
-            return convertTemperatureToCelcius(fromKelvin: temp)
-        } else { return nil }
+    var currTempAsCelsius: Float? {
+        return convertTemperatureToCelsius(fromKelvin: currTemp)
     }
     
     var currTempAsFahrenheit: Float? {
-        if let temp = currTemp {
-            return convertTemperatureToFahrenheit(fromKelvin: temp)
-        } else { return nil }
+        return convertTemperatureToFahrenheit(fromKelvin: currTemp)
     }
 }
 
