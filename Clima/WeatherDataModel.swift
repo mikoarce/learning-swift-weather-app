@@ -9,79 +9,40 @@
 import UIKit
 import SwiftyJSON
 
-protocol TemperatureConversionProtocol {
-    var tempMinAsCelsius: Float? { get }
-    var tempMinAsFahrenheit: Float? { get }
-    var tempMaxAsCelsius: Float? { get }
-    var tempMaxAsFahrenheit: Float? { get }
-    var currTempAsCelsius: Float? { get }
-    var currTempAsFahrenheit: Float? { get }
-}
-
-struct TemperatureInfo {
-    let humidity: Int?
-    let pressure: Int?
-    let tempMin: Float?
-    let tempMax: Float?
-    let currTemp: Float?
-    
-    private func convertTemperatureToCelsius(fromKelvin temp: Float?) -> Float? {
-        guard let temp = temp else {
-            return nil
-        }
-        return temp - 273.15
-    }
-    
-    private func convertTemperatureToFahrenheit(fromKelvin temp: Float?) -> Float? {
-        guard let temp = temp, let tempInCelsius = convertTemperatureToCelsius(fromKelvin: temp) else {
-            return nil
-        }
-        return (9.0/5.0) * tempInCelsius + 32.0
-    }
-}
-
-extension TemperatureInfo : TemperatureConversionProtocol {
-    var tempMinAsCelsius: Float? {
-        return convertTemperatureToCelsius(fromKelvin: tempMin)
-    }
-    
-    var tempMinAsFahrenheit: Float? {
-        return convertTemperatureToFahrenheit(fromKelvin: tempMin)
-    }
-    
-    var tempMaxAsCelsius: Float? {
-        return convertTemperatureToCelsius(fromKelvin: tempMax)
-    }
-    
-    var tempMaxAsFahrenheit: Float? {
-        return convertTemperatureToFahrenheit(fromKelvin: tempMax)
-    }
-    
-    var currTempAsCelsius: Float? {
-        return convertTemperatureToCelsius(fromKelvin: currTemp)
-    }
-    
-    var currTempAsFahrenheit: Float? {
-        return convertTemperatureToFahrenheit(fromKelvin: currTemp)
-    }
-}
-
 class WeatherDataModel {
     var tempInfo: TemperatureInfo? = nil
     var weatherDesc: String? = nil
     var weatherSummary: String? = nil
     var country: String? = nil
     var cityName: String? = nil
-    var sunriseTime: Date? = nil
-    var sunsetTime: Date? = nil
+    var sunriseDateTime: Date? = nil
+    var sunsetDateTime: Date? = nil
     var windSpeed: Float? = nil
     
     var completeLocation: String {
         get { return "\(cityName ?? "nil"), \(country ?? "nil")" }
     }
     
+    var sunriseTime: String {
+        get {
+            guard let sunriseDateTime = sunriseDateTime else {
+                return "Unavailable"
+            }
+            return self.formatTimeFrom(date: sunriseDateTime)
+        }
+    }
+    
+    var sunsetTime: String {
+        get {
+            guard let sunsetDateTime = sunsetDateTime else {
+                return "Unavailable"
+            }
+            return self.formatTimeFrom(date: sunsetDateTime)
+        }
+    }
+    
     //TODO: Refactor by removing hard coded stuff
-    init(jsonDict: NSDictionary) {
+    init(_ jsonDict: NSDictionary) {
         if let temperatureInfoDict = jsonDict.object(forKey: JSONKeys.KEY_TEMP_INFO) as? Dictionary<String, Any> {
             let humidity = temperatureInfoDict[JSONKeys.KEY_HUMIDITY] as? Int
             let tempMin = temperatureInfoDict[JSONKeys.KEY_MIN_TEMP] as? Float
@@ -92,8 +53,8 @@ class WeatherDataModel {
         }
         
         if let locationInfoDict = jsonDict.object(forKey: JSONKeys.KEY_LOCATION_INFO) as? Dictionary<String, Any> {
-            sunriseTime = Date(timeIntervalSince1970: locationInfoDict[JSONKeys.KEY_SUNRISE] as! Double)
-            sunsetTime = Date(timeIntervalSince1970: locationInfoDict[JSONKeys.KEY_SUNSET] as! Double)
+            sunriseDateTime = Date(timeIntervalSince1970: locationInfoDict[JSONKeys.KEY_SUNRISE] as! Double)
+            sunsetDateTime = Date(timeIntervalSince1970: locationInfoDict[JSONKeys.KEY_SUNSET] as! Double)
             country = locationInfoDict[JSONKeys.KEY_COUNTRY] as? String
         }
         
@@ -106,5 +67,21 @@ class WeatherDataModel {
             windSpeed = windInfoDict[JSONKeys.KEY_WIND_SPEED] as? Float
         }
         cityName = jsonDict.object(forKey: JSONKeys.KEY_CITY_NAME) as? String
+    }
+    
+    private func formatTimeFrom(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = formatter.calendar.timeZone
+        formatter.dateFormat = "h:mm a"
+        formatter.amSymbol = "AM"
+        formatter.pmSymbol = "PM"
+        
+        return formatter.string(from: date)
+    }
+    
+    private func interpretImage(fromValue: Int) {
+        
     }
 }

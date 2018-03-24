@@ -31,12 +31,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var pressureLabel: UILabel!
     @IBOutlet weak var humidityabel: UILabel!
     @IBOutlet weak var windSpeedLabel: UILabel!
-    
+    @IBOutlet weak var detailedWeatherInfoView: UIView!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         
         //Setup location manager
+        super.viewDidLoad()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.requestWhenInUseAuthorization()
@@ -65,7 +65,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             switch response.result {
             case .success(let value):
                 let jsonDict = value as! NSDictionary
-                let weatherData = WeatherDataModel(jsonDict: jsonDict)
+                let weatherData = WeatherDataModel(jsonDict)
                 self.populateWeatherDataUI(withData: weatherData)
             case .failure(let error):
                 self.handleError(error)
@@ -91,6 +91,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             pressureLabel.text = "\(tempInfo.pressure!) psi"
             humidityabel.text = "\(tempInfo.humidity!)%"
         }
+        sunriseTimeLabel.text = weatherData.sunriseTime
+        sunsetTimeLabel.text = weatherData.sunsetTime
+        windSpeedLabel.text = "\(weatherData.windSpeed!.format(f: ".0")) meter/sec"
     }
     
     //MARK: - Change City Delegate methods
