@@ -8,19 +8,8 @@
 
 import UIKit
 import CoreLocation
-import Alamofire
-import SwiftyJSON
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate {
-    //Constants
-    let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-    let APP_ID = ApiKeys.OPEN_WEATHER_API_KEY //Insert OpenWeather API Key here!
-    
-
-    //TODO: Declare instance variables here
-    let locationManager = CLLocationManager()
-    
-    //Pre-linked IBOutlets
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -32,8 +21,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var windSpeedLabel: UILabel!
     @IBOutlet weak var detailedWeatherInfoView: UIView!
     
+    let locationManager = CLLocationManager()
+    let openWeatherMapService = OpenWeatherMapService()
+    
     override func viewDidLoad() {
-        
         //Setup location manager
         super.viewDidLoad()
         locationManager.delegate = self
@@ -55,50 +46,65 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) {
-        let long = longitude
-        let lat = latitude
-        let urlAsString = "\(WEATHER_URL)?lat=\(lat)&lon=\(long)&appid=\(APP_ID)"
-        let url = URL(string: urlAsString)
-        
-        Alamofire.request(url!, method: .get).validate().responseJSON { response in
-            switch response.result {
-            case .success(let value):
-                let jsonDict = value as! NSDictionary
+        openWeatherMapService.getWeatherInfoWith(latitude: latitude, longitude: longitude) { (jsonDict) in
+            if let jsonDict = jsonDict {
                 let weatherData = WeatherDataModel(jsonDict)
                 self.populateWeatherDataUI(withData: weatherData)
-            case .failure(let error):
-                self.handleError(error)
+            } else {
+                self.handleError()
             }
         }
     }
     
     //Write the didFailWithError method here:
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        handleError(error)
+        print(error)
+        handleError()
     }
     
-    func handleError(_ error : Error) {
-        print(error)
+    func handleError() {
+        resetUI()
         cityLabel.text = "Location Unavailable"
     }
 
     func populateWeatherDataUI(withData weatherData: WeatherDataModel) {
+        resetUI()
         cityLabel.text = weatherData.completeLocation
         if let tempInfo = weatherData.tempInfo {
             temperatureLabel.text = "\(tempInfo.currTempAsCelsius!.format(f: ".0"))°C"
             temperatureRangeLabel.text = "\(tempInfo.tempMinAsCelsius!.format(f: ".0")) to \(tempInfo.tempMaxAsCelsius!.format(f: ".0"))°C"
-            pressureLabel.text = "\(tempInfo.pressure!) psi"
-            humidityabel.text = "\(tempInfo.humidity!)%"
+            
+            if let pressure = tempInfo.pressure { pressureLabel.text = "\(pressure) psi" }
+            if let humidity = tempInfo.humidity { humidityabel.text = "\(humidity)%" }
         }
+
         sunriseTimeLabel.text = weatherData.sunriseTime
         sunsetTimeLabel.text = weatherData.sunsetTime
         windSpeedLabel.text = "\(weatherData.windSpeed!.format(f: ".0")) meter/sec"
+    }
+    
+    private func resetUI() {
+        cityLabel.text = ""
+        temperatureLabel.text = ""
+        temperatureRangeLabel.text = ""
+        pressureLabel.text = ""
+        humidityabel.text = ""
+        sunriseTimeLabel.text = ""
+        sunsetTimeLabel.text = ""
+        windSpeedLabel.text = ""
     }
 }
 
 extension WeatherViewController : CityWeatherInfoDelegate {
     func getWeatherInfoOf(location: String) {
-        print("Getting weather info for: \(location)")
+        openWeatherMapService.getWeatherInfoWith(locationName: location) { (jsonDict) in
+            if let jsonDict = jsonDict {
+                let weatherDataModel = WeatherDataModel(jsonDict)
+                self.populateWeatherDataUI(withData: weatherDataModel)
+            } else {
+                self.handleError()
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

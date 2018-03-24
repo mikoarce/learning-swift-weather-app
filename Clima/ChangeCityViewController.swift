@@ -13,10 +13,10 @@ protocol CityWeatherInfoDelegate {
 }
 
 class ChangeCityViewController: UIViewController {
-    var delegate: CityWeatherInfoDelegate?
-    
     @IBOutlet weak var changeCityTextField: UITextField!
 
+    var delegate: CityWeatherInfoDelegate?
+    
     @IBAction func getWeatherPressed(_ sender: AnyObject) {
         if let input = changeCityTextField.text, input.count > 0 {
             delegate?.getWeatherInfoOf(location: input)
