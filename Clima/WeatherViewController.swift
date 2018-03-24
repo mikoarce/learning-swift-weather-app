@@ -12,7 +12,6 @@ import Alamofire
 import SwiftyJSON
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate {
-    
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
     let APP_ID = ApiKeys.OPEN_WEATHER_API_KEY //Insert OpenWeather API Key here!
@@ -95,18 +94,18 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         sunsetTimeLabel.text = weatherData.sunsetTime
         windSpeedLabel.text = "\(weatherData.windSpeed!.format(f: ".0")) meter/sec"
     }
-    
-    //MARK: - Change City Delegate methods
-    /***************************************************************/
-    
-    
-    //Write the userEnteredANewCityName Delegate method here:
-    
-
-    
-    //Write the PrepareForSegue Method here    
 }
 
-
-
+extension WeatherViewController : CityWeatherInfoDelegate {
+    func getWeatherInfoOf(location: String) {
+        print("Getting weather info for: \(location)")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "changeCityName" {
+            let changeCityVC = segue.destination as! ChangeCityViewController
+            changeCityVC.delegate = self
+        }
+    }
+}
 
