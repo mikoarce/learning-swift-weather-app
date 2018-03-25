@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 class OpenWeatherMapService {
-    private let WEATHER_URL = ApiKeys.WEATHER_URL
+    private let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
     private let APP_ID = ApiKeys.OPEN_WEATHER_API_KEY
     
     func getWeatherInfoWith(latitude: Double, longitude: Double, completion: @escaping (NSDictionary?) -> ()) {
