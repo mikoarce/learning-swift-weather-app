@@ -41,7 +41,10 @@ class WeatherDataModel {
         }
     }
     
-    //TODO: Refactor by removing hard coded stuff
+    /*
+     Since SwiftyJSON is not meant for serialization, we're doing this manually.
+     TODO: Check out other APIs for serialization (including Apple's own JSON API).
+     */
     init(_ jsonDict: NSDictionary) {
         if let temperatureInfoDict = jsonDict.object(forKey: JSONKeys.KEY_TEMP_INFO) as? Dictionary<String, Any> {
             let humidity = temperatureInfoDict[JSONKeys.KEY_HUMIDITY] as? Int
