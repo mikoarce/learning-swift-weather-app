@@ -184,6 +184,7 @@ Closures
 File/s referenced from this project:  
 
  * [OpenWeatherMapService.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/OpenWeatherMapService.swift)
- * [WeatherViewController.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/WeatherViewController.swift)
-...
+ * [WeatherViewController.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/WeatherViewController.swift)  
+ 
+Section in progress.
 
