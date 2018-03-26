@@ -95,7 +95,7 @@ extension TemperatureInfo : TemperatureConversionProtocol {
 }
 ```
 
-With this approach, your models are a lot more organized. But there's a lot more to protocols than just organizing objects which bring us to...  
+With this approach your models are in a way more organized where everything isn't dumped into one giant model. But there's more to protocols than just organization. This brings us to...  
 
 Delegates (through segue)
 -----
