@@ -6,9 +6,10 @@ Coming from a Java background, a lot of these new and *Swift-y* approaches are o
 
 Anyhow, these notes will briefly talk about three of the most important features of Swift and how it was implemented in the project. And these are:
 
-* Protocols
-* Delegates
-* Closures
+* [Protocols] https://github.com/mikoarce/learning-swift-weather-app#protocols
+* [Delegates (through segue)] (https://github.com/mikoarce/learning-swift-weather-app#delegates-through-segue)
+* [Closures] (https://github.com/mikoarce/learning-swift-weather-app#closures)
+
 
 Protocols
 -----
