@@ -1,6 +1,6 @@
 Notes
 -----
-What's written down in this area is just to note down what I <del>learned</del> need to remember from these mini projects that I do. Although some project ideas like this were taken from a Udemy course I'm following, I'd rather just take the assets (and skeleton code) and try to do it myself. If you're a Swift beginner like me, you should do it too!
+What's written down in this area is just to note down what I <del>learned</del> need to remember from these mini projects that I do. Although some project ideas like this were taken from a [Udemy course](https://www.udemy.com/ios-11-app-development-bootcamp/learn/v4/overview) I'm following, I'd rather just take the assets (and skeleton code) and try to do it myself. If you're a Swift beginner like me, you should do it too!
 
 Coming from a Java background, a lot of these new and *Swift-y* approaches are odd, really really odd, but in a pleasingly good way. Swift is definitely not chunky and it is incredibly soothing to the eyes. It gets you all giddy which makes it borderline cute. It's programmatically therapeutic.
 
