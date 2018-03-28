@@ -179,12 +179,175 @@ This snippet means that we are assigning the delegate implementation in ```Weath
 
 And there you have it! Following these steps will have the ```getWeatherInfoOf``` method in ```WeatherViewController``` run once called through ```delegate``` in ```ChangeCityViewController```.
 
-Closures
------
+Closures for capturing data in ```async``` blocks
+- 
 File/s referenced from this project:  
 
  * [OpenWeatherMapService.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/OpenWeatherMapService.swift)
- * [WeatherViewController.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/WeatherViewController.swift)  
- 
-Section in progress.
+ * [WeatherViewController.swift](https://github.com/mikoarce/learning-swift-weather-app/blob/master/Clima/WeatherViewController.swift)
 
+
+Closures are, in essence, blocks of code that can be passed as parameters. According to Apple's documentation:
+> Closures are self-contained blocks of functionality that can be passed around and used in your code. Closures in Swift are similar to blocks in C and Objective-C and to lambdas in other programming languages.
+
+You can read a more comprehensive explanation on closures and what they're all about but what I want to focus on is how we can use closures capturing data from asynchronous blocks of code.  
+
+Alamofire and the asynchronous response
+---
+[Alamofire](https://github.com/Alamofire/Alamofire) is a great library you can use for your HTTP networking needs. Personally, I used it to send get requests and retrieve responses as JSON objects. A typical request with Alamofire will look something like this:
+
+```swift
+private func send(url urlAsString: String) {
+    let url = URL(string: urlAsString)
+    
+    if let urlToSend = url {
+        Alamofire.request(urlToSend, method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                let jsonDict = value as! NSDictionary
+                //Handle your jsonDict
+            case .failure(let error):
+                NSLog("URL ERROR: ", "Error [\(error)] from URL: \(urlAsString)")
+                //Handle error scenario
+            }
+        }
+    }
+}
+```
+
+You can toss in a method for handling jsonDict while inside the `.success` switch condition but that would make it tightly coupled. It's in a `send` method, so it is at the very least expected to be reusable. 
+
+Capturing Alamofire Data Woes
+----
+We can't return `jsonDict` directly from inside the switch case because the data is inside a closure from `.responseJSON` which returns `Void`:
+
+```swift
+Alamofire.request(urlToSend, method: .get).validate()
+            .responseJSON(completionHandler: (DataResponse<Any>) -> Void)
+```
+
+What about declaring a variable outside the Alamofire block and use that instead of `jsonDict` so we can return the value like so:
+
+```swift
+private func send(url urlAsString: String) -> NSDictionary? {
+    let url = URL(string: urlAsString)
+    var jsonDict: NSDictionary? = nil //declare it
+    
+    if let urlToSend = url {
+        Alamofire.request(urlToSend, method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                jsonDict = value as! NSDictionary //assign it
+                //Handle your jsonDict
+            case .failure(let error):
+                NSLog("URL ERROR: ", "Error [\(error)] from URL: \(urlAsString)")
+                //Handle error scenario
+            }
+        }
+    }
+    return jsonDict //return it
+}
+
+```
+Doing this, however, will always have your `send` method return `nil`. The reason is because all the way inside `responseJSON` shows that we're actually handling our value inside an asynchronous block:
+
+```swift
+public func response<T: DataResponseSerializerProtocol>(
+        queue: DispatchQueue? = nil,
+        responseSerializer: T,
+        completionHandler: @escaping (DataResponse<T.SerializedObject>) -> Void)
+        -> Self
+    {
+
+    delegate.queue.addOperation {
+	    ...
+
+	    (queue ?? DispatchQueue.main).async { completionHandler(dataResponse) }
+
+	    ...
+	}
+}
+    
+```
+ 
+By definition, an asynchronous block is called in a separate thread without blocking the current thread. This is why merely assigning the value to a variable from outside the Alamofire method will not update anything because passing data in multiple threads doesn't work that way. The solution is to take advantage of closures!
+
+The Solution: Closures
+----
+One way to retrieve data from an asynchronous block is to use closures in capturing data. We can first create our method that captures data from the async block by changing the parameters to:
+
+```swift
+func send(url urlAsString: String, completion: @escaping (NSDictionary?) -> ()) {
+	...
+}
+```
+
+We then can call `completion(NSDictionary?)` like a method while inside `send(...)`:
+
+```swift
+func send(url urlAsString: String, completion: @escaping (NSDictionary?) -> ()) {
+	let url = URL(string: urlAsString)
+        print("URL: \(urlAsString)")
+        
+        if let urlToSend = url {
+            Alamofire.request(urlToSend, method: .get).validate().responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    let jsonDict = value as! NSDictionary
+                    completion(jsonDict)
+                case .failure(let error):
+                    NSLog("URL ERROR: ", "Error [\(error)] from URL: \(urlAsString)")
+                    completion(nil)
+                }
+            }
+        }
+}
+```
+
+Calling `completion(jsonDict)` this way would pass the `jsonDict` value *upward* to where `send(...)` was called. We then access `jsonDict` through what is called the closure expression syntax:
+
+```swift
+send(url: "myUrlString") { (jsonDict) in
+    //Do what you want with jsonDict, an NSDictionary from the asynchronous block
+}
+```
+
+The Solution: Nested/Chaining Closures
+----
+There are times however when you would want to double up your upward passes to a more descriptive method compared to just `send(...)`. But since we used closures to access asynchronous data, this is where chaining is required. We can chain our closures by creating another method that passes a closure to `send(...)`.
+
+```swift
+//Inside WeatherViewController class
+func getWeatherInfoOf(location: String) {
+    openWeatherMapService.getWeatherInfoWith(locationName: location) { (jsonDict) in
+        if let jsonDict = jsonDict {
+            let weatherDataModel = WeatherDataModel(jsonDict)
+            self.populateWeatherDataUI(withData: weatherDataModel)
+        } else {
+            self.handleError()
+        }
+    }
+}
+
+//Inside OpenWeatherMapService class
+func getWeatherInfoWith(locationName: String, completion: @escaping (NSDictionary?) -> ()) {
+    let newLocation = locationName.replacingOccurrences(of: " ", with: "+")
+    let urlAsString = "\(WEATHER_URL)?q=\(newLocation)&appid=\(APP_ID)"
+    send(url: urlAsString, completion: completion)
+}
+
+func send(url urlAsString: String, completion: @escaping (NSDictionary?) -> ()) {
+	//Inside asynchronous block:
+		completion(/* pass your NSDictionary? here */) 
+	//End of asynchronous block.
+}
+```
+
+Below is a step by step process on what happens once `WeatherViewController.getWeatherInfoOf(String)` is called:
+
+1. `getWeatherInfoWith(locationName: String, completion: @escaping (NSDictionary?) -> ())` is called.
+2. While inside `OpenWeatherMapService.getWeatherInfoWith(...)`, `send(...)` gets called taking in the closure of `.getWeatherInfoWith(...)`.
+3. `send(...)` method calls `completion(NSDictionary?)`, which passes back your NSDictionary up to `OpenWeatherMapService.getWeatherInfoWith(...)`.
+4. At this point `jsonDict` has been captured from the asynchronous block all the way up to `WeatherViewController.getWeatherInfoOf(...)` where we can finally use and manipulate it.
+
+Closures in Swift is quite a lengthy topic and capturing values from asynchronous blocks is only one practical use for it. There are different ways of utilizing closures like trailing closures and array sorting all found in Apple's comprehensive [documentation](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Closures.html).
