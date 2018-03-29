@@ -8,7 +8,7 @@ Anyhow, these notes will briefly talk about three of the most important features
 
  * [Protocols](https://github.com/mikoarce/learning-swift-weather-app#protocols)
  * [Delegates (through segue)](https://github.com/mikoarce/learning-swift-weather-app#delegates-through-segue)
- * [Closures](https://github.com/mikoarce/learning-swift-weather-app#closures)
+ * [Closures](https://github.com/mikoarce/learning-swift-weather-app#closures-for-capturing-data-in-async-blocks)
 
 Protocols
 -----
