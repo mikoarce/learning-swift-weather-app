@@ -23,6 +23,7 @@ class JSONKeys {
     static let KEY_WEATHER_INFO = "weather"
     static let KEY_WEATHER_DESCRIPTION = "description"
     static let KEY_WEATHER_SUMMARY = "main"
+    static let KEY_WEATHER_ID = "id"
     
     static let KEY_WIND_INFO = "wind"
     static let KEY_WIND_SPEED = "speed"

@@ -79,6 +79,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         sunriseTimeLabel.text = weatherData.sunriseTime
         sunsetTimeLabel.text = weatherData.sunsetTime
         windSpeedLabel.text = "\(weatherData.windSpeed!.format(f: ".0")) meter/sec"
+        
+        weatherIcon.image = weatherData.weatherIdImage
     }
     
     private func resetUI() {
@@ -90,6 +92,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         sunriseTimeLabel.text = ""
         sunsetTimeLabel.text = ""
         windSpeedLabel.text = ""
+        weatherIcon.image = nil
+        
     }
 }
 

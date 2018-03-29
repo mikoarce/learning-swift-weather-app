@@ -11,6 +11,7 @@ class WeatherDataModel {
     var tempInfo: TemperatureInfo? = nil
     var weatherDesc: String? = nil
     var weatherSummary: String? = nil
+    var weatherId: Int? = nil
     var country: String? = nil
     var cityName: String? = nil
     var sunriseDateTime: Date? = nil
@@ -19,6 +20,16 @@ class WeatherDataModel {
     
     var completeLocation: String {
         get { return "\(cityName ?? "nil"), \(country ?? "nil")" }
+    }
+    
+    var weatherIdImage: UIImage {
+        get {
+            guard let weatherId = self.weatherId,
+                      let image = UIImage(named: self.getWeatherIconName(condition: weatherId)) else {
+                        return UIImage(named: "dunno")!
+            }
+            return image
+        }
     }
     
     var sunriseTime: String {
@@ -62,6 +73,7 @@ class WeatherDataModel {
         if let weatherInfoDict = jsonDict.object(forKey: JSONKeys.KEY_WEATHER_INFO) as? [Dictionary<String, Any>] {
             weatherDesc = weatherInfoDict[0][JSONKeys.KEY_WEATHER_DESCRIPTION] as? String
             weatherSummary = weatherInfoDict[0][JSONKeys.KEY_WEATHER_SUMMARY] as? String
+            weatherId = weatherInfoDict[0][JSONKeys.KEY_WEATHER_ID] as? Int
         }
         
         if let windInfoDict = jsonDict.object(forKey: JSONKeys.KEY_WIND_INFO) as? Dictionary<String, Any> {
@@ -82,7 +94,34 @@ class WeatherDataModel {
         return formatter.string(from: date)
     }
     
-    private func interpretImage(fromValue: Int) {
-        
+    private func getWeatherIconName(condition: Int) -> String {
+        switch (condition) {
+            case 0...300:
+                return "tstorm1"
+            case 301...500:
+                return "light_rain"
+            case 501...600:
+                return "shower3"
+            case 601...700:
+                return "snow4"
+            case 701...771:
+                return "fog"
+            case 772...799:
+                return"tstorm3"
+            case 800 :
+                return"sunny"
+            case 801...804:
+                return "cloudy2"
+            case 900...903, 905...1000:
+                return "tstorm3"
+            case 903:
+                return "snow5"
+            case 904:
+                return "sunny"
+            default:
+                return "dunno"
+            }
     }
+    
+    
 }
