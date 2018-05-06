@@ -3,7 +3,6 @@
 //  Clima
 //
 
-
 import Foundation
 
 protocol TemperatureConversionProtocol {
@@ -21,14 +20,14 @@ struct TemperatureInfo {
     let tempMin: Double?
     let tempMax: Double?
     let currTemp: Double?
-    
+
     private func convertTemperatureToCelsius(fromKelvin temp: Double?) -> Double? {
         guard let temp = temp else {
             return nil
         }
         return temp - 273.15
     }
-    
+
     private func convertTemperatureToFahrenheit(fromKelvin temp: Double?) -> Double? {
         guard let temp = temp, let tempInCelsius = convertTemperatureToCelsius(fromKelvin: temp) else {
             return nil
@@ -37,27 +36,27 @@ struct TemperatureInfo {
     }
 }
 
-extension TemperatureInfo : TemperatureConversionProtocol {
+extension TemperatureInfo: TemperatureConversionProtocol {
     var tempMinAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: tempMin)
     }
-    
+
     var tempMinAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: tempMin)
     }
-    
+
     var tempMaxAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: tempMax)
     }
-    
+
     var tempMaxAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: tempMax)
     }
-    
+
     var currTempAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: currTemp)
     }
-    
+
     var currTempAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: currTemp)
     }

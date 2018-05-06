@@ -3,7 +3,6 @@
 //  Clima
 //
 
-
 import Foundation
 
 ///
@@ -13,8 +12,8 @@ import Foundation
 ///        myPi.format(format: ".3") = 3.142
 ///
 extension Float {
-    func format(f: String) -> String {
-        return String(format: "%\(f)f", self)
+    func format(val: String) -> String {
+        return String(format: "%\(val)f", self)
     }
 }
 
@@ -25,7 +24,7 @@ extension Float {
 ///      myPi.format(format: ".3") = 3.142
 ///
 extension Double {
-    func format(f: String) -> String {
-        return String(format: "%\(f)f", self)
+    func format(val: String) -> String {
+        return String(format: "%\(val)f", self)
     }
 }

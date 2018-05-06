@@ -3,18 +3,17 @@
 //  WeatherApp
 //
 
-
 import UIKit
 
-protocol CityWeatherInfoDelegate {
+protocol CityWeatherInfoDelegate: class {
     func getWeatherInfoOf(location: String)
 }
 
 class ChangeCityViewController: UIViewController {
     @IBOutlet weak var changeCityTextField: UITextField!
 
-    var delegate: CityWeatherInfoDelegate?
-    
+    weak var delegate: CityWeatherInfoDelegate?
+
     @IBAction func getWeatherPressed(_ sender: AnyObject) {
         if let input = changeCityTextField.text, input.count > 0 {
             delegate?.getWeatherInfoOf(location: input)
@@ -25,5 +24,4 @@ class ChangeCityViewController: UIViewController {
     @IBAction func backButtonPressed(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
-    
 }

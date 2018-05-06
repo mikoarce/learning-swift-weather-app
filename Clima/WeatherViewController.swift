@@ -18,7 +18,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var humidityabel: UILabel!
     @IBOutlet weak var windSpeedLabel: UILabel!
     @IBOutlet weak var detailedWeatherInfoView: UIView!
-    
+
     let locationManager = CLLocationManager()
     let openWeatherMapService = OpenWeatherMapService()
     
@@ -30,7 +30,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
-    
+
     /*
      Method to get location of phone based on locationManager.desiredAccuracy set in viewDidLoad().
      */
@@ -42,7 +42,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
     }
-    
+
     func findLocation(longitude: CLLocationDegrees, latitude: CLLocationDegrees) {
         openWeatherMapService.getWeatherInfoWith(latitude: latitude, longitude: longitude) { (jsonDict) in
             if let jsonDict = jsonDict {
@@ -53,13 +53,13 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
     }
-    
+
     //Write the didFailWithError method here:
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
         handleError()
     }
-    
+
     func handleError() {
         resetUI()
         cityLabel.text = "Location Unavailable"
@@ -69,20 +69,23 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         resetUI()
         cityLabel.text = weatherData.completeLocation
         if let tempInfo = weatherData.tempInfo {
-            temperatureLabel.text = "\(tempInfo.currTempAsCelsius!.format(f: ".0"))°C"
-            temperatureRangeLabel.text = "\(tempInfo.tempMinAsCelsius!.format(f: ".0")) to \(tempInfo.tempMaxAsCelsius!.format(f: ".0"))°C"
-            
+            temperatureLabel.text = "\(tempInfo.currTempAsCelsius!.format(val: ".0"))°C"
+            temperatureRangeLabel.text = """
+                \(tempInfo.tempMinAsCelsius!.format(val: ".0")) to
+                \(tempInfo.tempMaxAsCelsius!.format(val: ".0"))°C
+            """
+
             if let pressure = tempInfo.pressure { pressureLabel.text = "\(pressure) psi" }
             if let humidity = tempInfo.humidity { humidityabel.text = "\(humidity)%" }
         }
 
         sunriseTimeLabel.text = weatherData.sunriseTime
         sunsetTimeLabel.text = weatherData.sunsetTime
-        windSpeedLabel.text = "\(weatherData.windSpeed!.format(f: ".0")) meter/sec"
-        
+        windSpeedLabel.text = "\(weatherData.windSpeed!.format(val: ".0")) meter/sec"
+
         weatherIcon.image = weatherData.weatherIdImage
     }
-    
+
     private func resetUI() {
         cityLabel.text = ""
         temperatureLabel.text = ""
@@ -93,11 +96,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         sunsetTimeLabel.text = ""
         windSpeedLabel.text = ""
         weatherIcon.image = nil
-        
     }
 }
 
-extension WeatherViewController : CityWeatherInfoDelegate {
+extension WeatherViewController: CityWeatherInfoDelegate {
     func getWeatherInfoOf(location: String) {
         openWeatherMapService.getWeatherInfoWith(locationName: location) { (jsonDict) in
             if let jsonDict = jsonDict {
@@ -108,12 +110,11 @@ extension WeatherViewController : CityWeatherInfoDelegate {
             }
         }
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "changeCityName" {
-            let changeCityVC = segue.destination as! ChangeCityViewController
-            changeCityVC.delegate = self
+            let changeCityVC = segue.destination as? ChangeCityViewController
+            changeCityVC?.delegate = self
         }
     }
 }
-
