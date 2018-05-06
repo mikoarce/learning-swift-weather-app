@@ -7,29 +7,29 @@
 import Foundation
 
 protocol TemperatureConversionProtocol {
-    var tempMinAsCelsius: Float? { get }
-    var tempMinAsFahrenheit: Float? { get }
-    var tempMaxAsCelsius: Float? { get }
-    var tempMaxAsFahrenheit: Float? { get }
-    var currTempAsCelsius: Float? { get }
-    var currTempAsFahrenheit: Float? { get }
+    var tempMinAsCelsius: Double? { get }
+    var tempMinAsFahrenheit: Double? { get }
+    var tempMaxAsCelsius: Double? { get }
+    var tempMaxAsFahrenheit: Double? { get }
+    var currTempAsCelsius: Double? { get }
+    var currTempAsFahrenheit: Double? { get }
 }
 
 struct TemperatureInfo {
     let humidity: Int?
     let pressure: Int?
-    let tempMin: Float?
-    let tempMax: Float?
-    let currTemp: Float?
+    let tempMin: Double?
+    let tempMax: Double?
+    let currTemp: Double?
     
-    private func convertTemperatureToCelsius(fromKelvin temp: Float?) -> Float? {
+    private func convertTemperatureToCelsius(fromKelvin temp: Double?) -> Double? {
         guard let temp = temp else {
             return nil
         }
         return temp - 273.15
     }
     
-    private func convertTemperatureToFahrenheit(fromKelvin temp: Float?) -> Float? {
+    private func convertTemperatureToFahrenheit(fromKelvin temp: Double?) -> Double? {
         guard let temp = temp, let tempInCelsius = convertTemperatureToCelsius(fromKelvin: temp) else {
             return nil
         }
@@ -38,27 +38,27 @@ struct TemperatureInfo {
 }
 
 extension TemperatureInfo : TemperatureConversionProtocol {
-    var tempMinAsCelsius: Float? {
+    var tempMinAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: tempMin)
     }
     
-    var tempMinAsFahrenheit: Float? {
+    var tempMinAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: tempMin)
     }
     
-    var tempMaxAsCelsius: Float? {
+    var tempMaxAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: tempMax)
     }
     
-    var tempMaxAsFahrenheit: Float? {
+    var tempMaxAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: tempMax)
     }
     
-    var currTempAsCelsius: Float? {
+    var currTempAsCelsius: Double? {
         return convertTemperatureToCelsius(fromKelvin: currTemp)
     }
     
-    var currTempAsFahrenheit: Float? {
+    var currTempAsFahrenheit: Double? {
         return convertTemperatureToFahrenheit(fromKelvin: currTemp)
     }
 }

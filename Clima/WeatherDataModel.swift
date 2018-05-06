@@ -16,7 +16,7 @@ class WeatherDataModel {
     var cityName: String? = nil
     var sunriseDateTime: Date? = nil
     var sunsetDateTime: Date? = nil
-    var windSpeed: Float? = nil
+    var windSpeed: Double? = nil
     
     var completeLocation: String {
         get { return "\(cityName ?? "nil"), \(country ?? "nil")" }
@@ -57,9 +57,9 @@ class WeatherDataModel {
     init(_ jsonDict: NSDictionary) {
         if let temperatureInfoDict = jsonDict.object(forKey: JSONKeys.KEY_TEMP_INFO) as? Dictionary<String, Any> {
             let humidity = temperatureInfoDict[JSONKeys.KEY_HUMIDITY] as? Int
-            let tempMin = temperatureInfoDict[JSONKeys.KEY_MIN_TEMP] as? Float
-            let tempMax = temperatureInfoDict[JSONKeys.KEY_MAX_TEMP] as? Float
-            let temp = temperatureInfoDict[JSONKeys.KEY_CURR_TEMP] as? Float
+            let tempMin = temperatureInfoDict[JSONKeys.KEY_MIN_TEMP] as? Double
+            let tempMax = temperatureInfoDict[JSONKeys.KEY_MAX_TEMP] as? Double
+            let temp = temperatureInfoDict[JSONKeys.KEY_CURR_TEMP] as? Double
             let pressure = temperatureInfoDict[JSONKeys.KEY_PRESSURE] as? Int
             tempInfo = TemperatureInfo(humidity: humidity, pressure: pressure, tempMin: tempMin, tempMax: tempMax, currTemp: temp)
         }
@@ -77,7 +77,7 @@ class WeatherDataModel {
         }
         
         if let windInfoDict = jsonDict.object(forKey: JSONKeys.KEY_WIND_INFO) as? Dictionary<String, Any> {
-            windSpeed = windInfoDict[JSONKeys.KEY_WIND_SPEED] as? Float
+            windSpeed = windInfoDict[JSONKeys.KEY_WIND_SPEED] as? Double
         }
         cityName = jsonDict.object(forKey: JSONKeys.KEY_CITY_NAME) as? String
     }
